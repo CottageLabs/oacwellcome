@@ -1,5 +1,27 @@
 # Wellcome Trust OA Compliance
 
+## Setup
+
+Clone the app into a virtualenv. There are no system dependencies to install via your OS' package manager.
+
+```bash
+git submodule update --init --recursive
+git submodule update --recursive  # you have to run again without --init to update them
+cd esprit
+pip install -e .
+cd ..
+cd magnificent-octopus
+pip install -e .
+cd ..
+pip install -e .
+```
+
+```bash
+# activate your virtualenv and run this from the root of the repo
+python service/web.py
+```
+
+
 ## Data Model
 
 ### Overview
