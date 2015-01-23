@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="oacwellcome-spreadsheets-facetview"></div>
+
+{% endblock %}
+
+
+{% block extra_js_bottom %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/spreadsheetjob.facetview.theme.js') }}"></script>
+{% endblock%}

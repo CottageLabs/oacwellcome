@@ -77,6 +77,10 @@ def download_progress_csv(job_id):
     filename = "processed_" + job.filename
     return send_file(StringIO(spreadsheet), attachment_filename=filename, as_attachment=True)
 
+@app.route("/spreadsheets")
+def spreadsheets():
+    return render_template('spreadsheets.html')
+
 # this allows us to override the standard static file handling with our own dynamic version
 @app.route("/static/<path:filename>")
 def static(filename):
