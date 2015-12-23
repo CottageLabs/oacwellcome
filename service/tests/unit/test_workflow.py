@@ -877,6 +877,8 @@ class TestWorkflow(testindex.ESTestCase):
             return False
         def is_oa_lookup(msg):
             return True
+        def is_failed_lookup(msg):
+            return None
 
         # Check that an OA record is correctly identified
         workflow.doaj_lookup = is_oa_lookup
@@ -893,6 +895,15 @@ class TestWorkflow(testindex.ESTestCase):
         workflow.hybrid_or_oa(msg)
         assert record.journal_type == "hybrid"
         assert len(record.provenance) == 1
+
+        # check that no DOAJ check is performed if no issns are present
+        # or alternatively the DOAJ lookup fails for unknown reasons
+        workflow.doaj_lookup = is_failed_lookup
+        record = models.Record()
+        msg = workflow.WorkflowMessage(record=record)
+        workflow.hybrid_or_oa(msg)
+        assert record.journal_type is None
+        # not testing provenance length as the relevant function is mocked out - doaj_lookup
 
     def test_10_process_record_01_everything(self):
         def mock_get_md(*args, **kwargs):

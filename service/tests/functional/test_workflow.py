@@ -140,7 +140,7 @@ class TestWorkflow(TestCase):
         assert is_oa is None
 
         # An OA journal
-        record.issn = "1338-3973"
+        record.issn = "1932-6203"
         is_oa = workflow.doaj_lookup(msg)
         assert is_oa is True
 
