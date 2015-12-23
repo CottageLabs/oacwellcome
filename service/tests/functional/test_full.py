@@ -47,7 +47,7 @@ class TestWorkflow(testindex.ESTestCase):
 
         # once the job processor is finished, we can export the csv for the job we ran
         csvcontent = workflow.output_csv(job)
-        with codecs.open(os.path.join(UPLOAD_DIR, "output.csv"), "wb") as f:
+        with codecs.open(os.path.join(UPLOAD_DIR, "output.csv"), "wb", "utf8") as f:
             f.write(csvcontent)
 
     def test_02_full_asynchronous(self):
