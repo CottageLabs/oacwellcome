@@ -619,6 +619,10 @@ def doaj_lookup(msg):
     :param msg: WorkflowMessage object
     :return:    True if the journal is OA, False if hybrid
     """
+    if msg.record.issn is None or len(msg.record.issn) == 0:
+        msg.record.add_provenance("doaj", "Not Looking up record in DOAJ as no ISSNs were found for this article.")
+        app.logger.info("Not Looking up record in DOAJ as no ISSNs were found for this article.")
+        return None
     app.logger.info("Looking up record in DOAJ " + str(msg.record.id))
     client = doaj.DOAJSearchClient()
     journals = client.journals_by_issns(msg.record.issn)

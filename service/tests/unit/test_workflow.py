@@ -1,5 +1,5 @@
 from octopus.modules.es import testindex
-from octopus.modules.epmc import client as epmc
+from octopus.modules.epmc import client as epmc, models as epmcmod
 from octopus.modules.oag import oagr
 from octopus.modules.oag import client as oagclient
 from service import workflow, models
@@ -731,7 +731,7 @@ class TestWorkflow(testindex.ESTestCase):
         msg = workflow.WorkflowMessage(record=record)
 
         data = json.loads(open(EPMC_MD, "r").read())
-        epmc_md = epmc.EPMCMetadata(data)
+        epmc_md = epmcmod.EPMCMetadata(data)
 
         workflow.populate_identifiers(msg, epmc_md)
 
@@ -754,7 +754,7 @@ class TestWorkflow(testindex.ESTestCase):
         msg = workflow.WorkflowMessage(record=record)
 
         data = json.loads(open(EPMC_MD, "r").read())
-        epmc_md = epmc.EPMCMetadata(data)
+        epmc_md = epmcmod.EPMCMetadata(data)
 
         workflow.extract_metadata(msg, epmc_md)
 
@@ -877,6 +877,8 @@ class TestWorkflow(testindex.ESTestCase):
             return False
         def is_oa_lookup(msg):
             return True
+        def is_failed_lookup(msg):
+            return None
 
         # Check that an OA record is correctly identified
         workflow.doaj_lookup = is_oa_lookup
@@ -894,9 +896,18 @@ class TestWorkflow(testindex.ESTestCase):
         assert record.journal_type == "hybrid"
         assert len(record.provenance) == 1
 
+        # check that no DOAJ check is performed if no issns are present
+        # or alternatively the DOAJ lookup fails for unknown reasons
+        workflow.doaj_lookup = is_failed_lookup
+        record = models.Record()
+        msg = workflow.WorkflowMessage(record=record)
+        workflow.hybrid_or_oa(msg)
+        assert record.journal_type is None
+        # not testing provenance length as the relevant function is mocked out - doaj_lookup
+
     def test_10_process_record_01_everything(self):
         def mock_get_md(*args, **kwargs):
-            md = epmc.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
+            md = epmcmod.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
             return md, 1.0
 
         def mock_get_ft(*args, **kwargs):
@@ -953,7 +964,7 @@ class TestWorkflow(testindex.ESTestCase):
 
     def test_10_process_record_03_aam_no_licence(self):
         def mock_get_md(*args, **kwargs):
-            md = epmc.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
+            md = epmcmod.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
             return md, 1.0
 
         def mock_get_ft(*args, **kwargs):
@@ -999,7 +1010,7 @@ class TestWorkflow(testindex.ESTestCase):
 
     def test_10_process_record_04_licence_no_aam(self):
         def mock_get_md(*args, **kwargs):
-            md = epmc.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
+            md = epmcmod.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
             return md, 1.0
 
         def mock_get_ft(*args, **kwargs):
@@ -1043,7 +1054,7 @@ class TestWorkflow(testindex.ESTestCase):
 
     def test_10_process_record_05_no_ft(self):
         def mock_get_md(*args, **kwargs):
-            md = epmc.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
+            md = epmcmod.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
             return md, 1.0
 
         def mock_get_ft(*args, **kwargs):
