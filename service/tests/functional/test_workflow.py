@@ -135,6 +135,10 @@ class TestWorkflow(TestCase):
         record = models.Record()
         msg = workflow.WorkflowMessage(record=record)
 
+        # A journal without an issn
+        is_oa = workflow.doaj_lookup(msg)
+        assert is_oa is None
+
         # An OA journal
         record.issn = "1338-3973"
         is_oa = workflow.doaj_lookup(msg)

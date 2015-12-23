@@ -2,7 +2,7 @@ from service.dao import SpreadsheetJobDAO, RecordDAO, OAGRLinkDAO
 from datetime import datetime
 from octopus.lib.dataobj import DataObj
 
-class SpreadsheetJob(SpreadsheetJobDAO, DataObj):
+class SpreadsheetJob(DataObj, SpreadsheetJobDAO):
     """
     {
         "id" : "<opaque identifier for upload>",
@@ -57,7 +57,7 @@ class SpreadsheetJob(SpreadsheetJobDAO, DataObj):
         self.status_message = message
 
 
-class Record(RecordDAO, DataObj):
+class Record(DataObj, RecordDAO):
     """
     {
         "id" : "<opaque id of this record>",
@@ -133,6 +133,9 @@ class Record(RecordDAO, DataObj):
     OAG_STATES = [u"not_sent", u"sent", u"success", u"fto", u"error"]
     LICENCE_SOURCES = [u"epmc_xml", u"epmc", u"publisher"]
     JOURNAL_TYPES = [u"oa", u"hybrid"]
+
+    def __init__(self, raw=None):
+        super(Record, self).__init__(raw)
 
     @property
     def upload_id(self):
@@ -464,7 +467,7 @@ class Record(RecordDAO, DataObj):
         self.standard_compliance = self.standard_compliance
         self.deluxe_compliance = self.deluxe_compliance
 
-class OAGRLink(OAGRLinkDAO, DataObj):
+class OAGRLink(DataObj, OAGRLinkDAO):
     @property
     def oagrjob_id(self):
         return self._get_single("oagrjob_id", self._utf8_unicode())

@@ -1,5 +1,5 @@
 from octopus.modules.es import testindex
-from octopus.modules.epmc import client as epmc
+from octopus.modules.epmc import client as epmc, models as epmcmod
 from octopus.modules.oag import oagr
 from octopus.modules.oag import client as oagclient
 from service import workflow, models
@@ -731,7 +731,7 @@ class TestWorkflow(testindex.ESTestCase):
         msg = workflow.WorkflowMessage(record=record)
 
         data = json.loads(open(EPMC_MD, "r").read())
-        epmc_md = epmc.EPMCMetadata(data)
+        epmc_md = epmcmod.EPMCMetadata(data)
 
         workflow.populate_identifiers(msg, epmc_md)
 
@@ -754,7 +754,7 @@ class TestWorkflow(testindex.ESTestCase):
         msg = workflow.WorkflowMessage(record=record)
 
         data = json.loads(open(EPMC_MD, "r").read())
-        epmc_md = epmc.EPMCMetadata(data)
+        epmc_md = epmcmod.EPMCMetadata(data)
 
         workflow.extract_metadata(msg, epmc_md)
 
@@ -896,7 +896,7 @@ class TestWorkflow(testindex.ESTestCase):
 
     def test_10_process_record_01_everything(self):
         def mock_get_md(*args, **kwargs):
-            md = epmc.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
+            md = epmcmod.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
             return md, 1.0
 
         def mock_get_ft(*args, **kwargs):
@@ -953,7 +953,7 @@ class TestWorkflow(testindex.ESTestCase):
 
     def test_10_process_record_03_aam_no_licence(self):
         def mock_get_md(*args, **kwargs):
-            md = epmc.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
+            md = epmcmod.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
             return md, 1.0
 
         def mock_get_ft(*args, **kwargs):
@@ -999,7 +999,7 @@ class TestWorkflow(testindex.ESTestCase):
 
     def test_10_process_record_04_licence_no_aam(self):
         def mock_get_md(*args, **kwargs):
-            md = epmc.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
+            md = epmcmod.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
             return md, 1.0
 
         def mock_get_ft(*args, **kwargs):
@@ -1043,7 +1043,7 @@ class TestWorkflow(testindex.ESTestCase):
 
     def test_10_process_record_05_no_ft(self):
         def mock_get_md(*args, **kwargs):
-            md = epmc.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
+            md = epmcmod.EPMCMetadata(json.loads(open(EPMC_MD, "r").read()))
             return md, 1.0
 
         def mock_get_ft(*args, **kwargs):
