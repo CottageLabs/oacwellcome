@@ -64,3 +64,4 @@ SPREADSHEET_OPTIONS = [('None', 'Type:'), ('Excel', 'Excel'), ('Google Docs', 'G
 OACWELLCOME_JOBS_POLL_TIME = 2  # seconds
 
 ERROR_LOGGING_ADDRESSES = ['richard@cottagelabs.com', 'emanuil@cottagelabs.com']
+MAIL_SUBJECT_PREFIX = '[oac] '

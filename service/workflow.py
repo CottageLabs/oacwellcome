@@ -34,7 +34,7 @@ def csv_upload(flask_file_handle, filename, contact_email):
     return s
 
 def email_submitter(contact_email, url):
-    return mail.send_mail(to=[contact_email], subject="[oac] Successful upload", template_name="emails/upload_email_template.txt", url=url)
+    return mail.send_mail(to=[contact_email], subject="Successful upload", template_name="emails/upload_email_template.txt", url=url)
 
 
 def normalise_pmcid(identifier):
@@ -818,9 +818,9 @@ def oag_callback_closure():
             # to check and update if so
             time.sleep(2)   # just to give the index a bit of time to refresh
             pc = ssjob.pc_complete
-            if int(pc) == 100:
+            if int(pc) == 100 and not ssjob.status_code == 'complete':
                 ssjob.status_code = "complete"
-                ssjob.save()
+                ssjob.save(blocking=True)
                 send_complete_mail(ssjob)
 
         # if there is anything to reprocess, do that
@@ -889,7 +889,7 @@ def send_complete_mail(job):
         ctx.pop()
 
     try:
-        mail.send_mail(to=[job.contact_email], subject="[oac] Processing complete", template_name="emails/complete_email_template.txt", url=url)
+        mail.send_mail(to=[job.contact_email], subject="Processing complete", template_name="emails/complete_email_template.txt", url=url)
     except:
         app.logger.warn("Problem sending email")
 
