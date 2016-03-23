@@ -756,7 +756,7 @@ class TestWorkflow(testindex.ESTestCase):
         data = json.loads(open(EPMC_MD, "r").read())
         epmc_md = epmcmod.EPMCMetadata(data)
 
-        workflow.extract_metadata(msg, epmc_md)
+        workflow.extract_epmc_metadata(msg, epmc_md)
 
         assert record.in_epmc is True
         assert record.is_oa is False

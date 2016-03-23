@@ -83,7 +83,8 @@ class Record(DataObj, RecordDAO):
             "total_cost" : "<total cost>",
             "grant_code" : "<wellcome grant code>",
             "licence_info" : "<original licence information>",
-            "notes" : "<original notes>"
+            "notes" : "<original notes>",
+            "authors" : "<author list>"
         },
 
         "identifiers" : {
@@ -103,7 +104,9 @@ class Record(DataObj, RecordDAO):
             "oag_doi" : "not_sent|sent|success|fto|error",
             "oag_pmid" : "not_sent|sent|success|fto|error",
             "epmc_complete" : true|false,
-            "oag_complete" : true|false
+            "oag_complete" : true|false,
+            "authors": ["author 1 - affiliation", "author 2 - affiliation", ...],
+            "publisher" : "publisher name from Crossref"
         },
 
         "compliance" : {
@@ -419,6 +422,14 @@ class Record(DataObj, RecordDAO):
     @authors.setter
     def authors(self, val):
         self._set_list('supporting_info.authors', val, self._utf8_unicode())
+
+    @property
+    def publisher(self):
+        return self._get_single("supporting_info.publisher", self._utf8_unicode())
+
+    @publisher.setter
+    def publisher(self, val):
+        self._set_single("supporting_info.publisher", val, self._utf8_unicode())
 
     @property
     def provenance(self):

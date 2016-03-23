@@ -1,6 +1,7 @@
 from octopus.core import app
 from octopus.modules.epmc import client as epmc
 from octopus.modules.doaj import client as doaj
+from octopus.modules.crossref import client as crossref
 from octopus.modules.identifiers import pmid, doi, pmcid
 from octopus.lib import mail
 from service import models, sheets, licences
@@ -156,6 +157,7 @@ def output_csv(job):
             "provenance" : serialise_provenance(r),
             "issn" : ", ".join(r.issn),
             "authors" : ', '.join(r.authors),
+            "publisher" : r.publisher,
 
             # this is also a result of the run, but it can be overridden by the source data
             # if it was passed in and not empty
@@ -311,7 +313,15 @@ def process_record(msg):
     populate_identifiers(msg, epmc_md)
 
     # add the key bits of metadata we're interested in
-    extract_metadata(msg, epmc_md)
+    extract_epmc_metadata(msg, epmc_md)
+
+    if msg.record.doi:
+        try:
+            crossref_md = crossref.Crossref.get_by_doi(msg.record.doi)
+            extract_crossref_metadata(msg, crossref_md)
+        except crossref.CrossRefAPIException as e:
+            msg.record.add_provenance("processor", "A problem occurred while trying to get Crossref info for doi {0}, leaving Crossref data out.".format(msg.record.doi))
+            app.logger.error("Crossref problem for doi {0}, original msg: \n{1}".format(msg.record.doi, e.message))
 
     # now we've extracted all we can from the EPMC metadata, let's save before moving on to the
     # next external request
@@ -666,7 +676,21 @@ def populate_identifiers(msg, epmc_md):
     if msg.record.doi is None and epmc_md.doi is not None:
         msg.record.doi = normalise_doi(epmc_md.doi)
 
-def extract_metadata(msg, epmc_md):
+
+def extract_crossref_metadata(msg, crossref_md):
+    """
+    Extract all Crossref info we want.
+
+    :param msg: WorkflowMessage object
+    :param crossref_md: Crossref JSON returned (Python dict)
+    :return:
+    """
+    if not msg.record.publisher and crossref_md.get('publisher', ''):
+        msg.record.publisher = crossref_md['publisher']
+        msg.record.add_provenance("processor", "Found publisher info in Crossref.")
+
+
+def extract_epmc_metadata(msg, epmc_md):
     """
     Extract the inEPMC and isOA properties of the metadata
 
