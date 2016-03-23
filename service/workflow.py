@@ -775,6 +775,14 @@ def extract_fulltext_licence(msg, fulltext):
                 msg.record.licence_source = "epmc_xml"
                 return
 
+    # try our license strings across the whole fulltext XML
+    for ss, t in licences.substrings:
+        if ss in fulltext.tostring():
+            msg.record.licence_type = t
+            msg.record.add_provenance("processor", "Fulltext XML contains %(text)s somewhere in the XML, which gives us license type %(license)s" % {"text" : ss, "license" : t})
+            msg.record.licence_source = "epmc_xml"
+            return
+
     # finally, if there is licence information, but we can't recognise it, then record a non-standard licence
     if type is not None or url is not None or para is not None:
         msg.record.licence_type = "non-standard-licence"

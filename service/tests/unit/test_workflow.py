@@ -860,6 +860,20 @@ class TestWorkflow(testindex.ESTestCase):
         assert record.licence_source == "epmc_xml"
         assert len(record.provenance) == 1
 
+        title = xml.xpath("//article-title")
+        title = title[0]
+        orig_title = title.text
+        title.text = title.text + ' (available under CC BY)'
+        s = etree.tostring(xml)
+        ft = epmc.EPMCFullText(s)
+        record = models.Record()
+        msg = workflow.WorkflowMessage(record=record)
+        workflow.extract_fulltext_licence(msg, ft)
+        assert record.licence_type == "cc-by"
+        assert record.licence_source == "epmc_xml"
+        assert len(record.provenance) == 1
+        title.text = orig_title  # cleanup for next assert just below
+
         # no licence element present
         p = l[0].getparent()
         p.remove(l[0])
