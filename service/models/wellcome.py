@@ -413,6 +413,14 @@ class Record(DataObj, RecordDAO):
         self._set_single("compliance.deluxe", val, bool)
 
     @property
+    def authors(self):
+        return self._get_list('supporting_info.authors')
+
+    @authors.setter
+    def authors(self, val):
+        self._set_list('supporting_info.authors', val, self._utf8_unicode())
+
+    @property
     def provenance(self):
         objs = self._get_list("provenance")
         return [(o.get("by"), o.get("when"), o.get("note")) for o in objs]

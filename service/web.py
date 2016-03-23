@@ -25,6 +25,9 @@ class UploadForm(Form):
     contact_email = EmailField('Email Address', [validators.DataRequired(), validators.Email()])
     spreadsheet_type = SelectField('Type', choices=app.config.get('SPREADSHEET_OPTIONS'))
 
+@app.route("/index")
+def root():
+    return redirect(url_for('.upload_csv'), 301)
 
 @app.route("/", methods=['GET', 'POST'])
 #@app.route("/upload_csv", methods=['GET', 'POST'])

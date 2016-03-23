@@ -155,6 +155,7 @@ def output_csv(job):
             "deluxe_compliance" : r.deluxe_compliance,
             "provenance" : serialise_provenance(r),
             "issn" : ", ".join(r.issn),
+            "authors" : ', '.join(r.authors),
 
             # this is also a result of the run, but it can be overridden by the source data
             # if it was passed in and not empty
@@ -691,6 +692,15 @@ def extract_metadata(msg, epmc_md):
     # the journal
     if epmc_md.journal is not None:
         msg.record.journal = epmc_md.journal
+
+    if not msg.record.title and epmc_md.title:
+        msg.record.title = epmc_md.title
+        msg.record.add_provenance("processor", "Title was found in EPMC - it was blank in the original upload.")
+
+    if epmc_md.authors:
+        msg.record.authors = map(lambda x: u"{0} - {1}".format(x.get('fullName', '[unknown name]'), x.get('affiliation', '[unknown affiliation]')).encode('utf-8'), epmc_md.authors)
+        msg.record.add_provenance("processor", "Author list found in EPMC - overwriting author list if it was in original upload.")
+
 
 def extract_fulltext_info(msg, fulltext):
     # record that the fulltext exists in the first place
