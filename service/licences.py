@@ -115,6 +115,9 @@ substrings.extend([
     ('CC-BY', 'cc-by'),
     ('CC BY', 'cc-by'),
     ('Creative Commons Attribution', 'cc-by'),
-    ('CC0', 'cc0')
+    (' CC0 ', 'cc0'),
+    ('-CC0 ', 'cc0'),
+    (' CC0.', 'cc0'),
+    (' CC0,', 'cc0')
 ])
 

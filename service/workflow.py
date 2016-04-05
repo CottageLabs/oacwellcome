@@ -722,7 +722,16 @@ def extract_epmc_metadata(msg, epmc_md):
         msg.record.add_provenance("processor", "Title was found in EPMC - it was blank in the original upload.")
 
     if epmc_md.authors:
-        msg.record.authors = map(lambda x: u"{0} - {1}".format(x.get('fullName', ''), x.get('affiliation', '')).encode('utf-8'), epmc_md.authors)
+        authors = []
+        for a in epmc_md.authors:
+            authorstr = ''
+            if a.get('fullName', ''):
+                authorstr += a.get('fullName', '')
+            if a.get('affiliation', ''):
+                authorstr += ' - ' + a.get('affiliation', '')
+            if authorstr:
+                authors.append(authorstr.encode('utf-8'))
+        msg.record.authors = authors
         msg.record.add_provenance("processor", "Author list found in EPMC - overwriting author list if it was in original upload.")
 
 
