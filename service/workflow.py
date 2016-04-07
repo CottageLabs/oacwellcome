@@ -399,7 +399,7 @@ def process_oag(oag_register, job):
 
     # first create and set going the oagrjob after a short delay
     # FIXME: note that OAGR doesn't work with the id type - will this be a problem later?
-    req = client.RequestState([o.get("id") for o in oag_register], start=datetime.now() + timedelta(seconds=10))
+    req = client.RequestState([o.get("id") for o in oag_register], start=datetime.utcnow() + timedelta(seconds=10))
     oagrjob = oagr.JobRunner.make_job(req)
 
     # now create a link between the spreadsheet job and the oagr job
